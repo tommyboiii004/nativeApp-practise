@@ -29,9 +29,7 @@ const RootLayout = () => {
 
   return (
     <>
-    <Text>Header</Text>
     <Slot/>
-    <Text>Footer</Text>
     </>
   ) 
 }
