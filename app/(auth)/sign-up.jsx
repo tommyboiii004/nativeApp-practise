@@ -5,6 +5,7 @@ import { View, Text, ScrollView, Image } from "react-native";
 import { images } from "../../constants";
 import CustomButton from '../../components/CustomButton'
 import FormField from '../../components/FormField'
+import { createUser } from "../../lib/appwrite";
 
 const SignUp = () => {
 
@@ -15,7 +16,9 @@ const SignUp = () => {
     password: "",
   });
 
-  const submit = () => { }
+  const submit = () => { 
+    createUser();
+  }
 
   return (
     <SafeAreaView className="bg-primary h-full">
