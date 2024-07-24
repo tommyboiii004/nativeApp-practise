@@ -1,10 +1,11 @@
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Image, Alert } from 'react-native'
 import {React, useState} from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import FormField from '../../components/FormField'
 import { ResizeMode, Video } from 'expo-av'
 import { icons } from '../../constants'
 import CustomButton from '../../components/CustomButton'
+import { getDocumentAsync } from 'expo-document-picker'
 
 const Create = () => {
 
@@ -15,6 +16,30 @@ const Create = () => {
     thumbnail: null,
     promt: ''
   })
+
+  const openPicker = async (selectType) => {
+    const result = await getDocumentAsync({
+      type:  selectType === 'image' ? ['image/png', 'image/jpg'] : ['video/mp4', 'video/gif']
+    })
+
+    if (!result.canceled) {
+      if (selectType === 'image') {
+        setForm({...form, thumbnail: result.assets[0]})
+      }
+      if (selectType === 'video') {
+        setForm({...form, video: result.assets[0]})
+      }
+    }
+    else {
+      setTimeout(() => { 
+        Alert.alert('Document picked', JSON.stringify(result, null, 2))
+      }, 100)
+    }
+  }
+
+  const submit = () => {
+
+  }
 
   return (
     <SafeAreaView className='bg-primary h-full'>
@@ -35,7 +60,7 @@ const Create = () => {
           <Text className='text-base text-gray-100 font-pmedium'>
             Upload Video
           </Text>
-          <TouchableOpacity className=''>
+          <TouchableOpacity onPress={()=> openPicker('video')} className=''>
             {form.video ? (
               <Video
                 source={{ uri: form.video.uri }}
@@ -57,7 +82,7 @@ const Create = () => {
           <Text className='text-base text-gray-100 font-pmedium'>
             Thumbnail Image
           </Text>
-          <TouchableOpacity className=''>
+          <TouchableOpacity className='' onPress={()=> openPicker('image ')}>
             {form.thumbnail ? (
               <Image
                 source={{ uri: form.thumbnail.uri }}
@@ -82,7 +107,12 @@ const Create = () => {
           otherStyles="mt-7"
         />
 
-        <CustomButton />
+        <CustomButton
+          title='Submit & Publish'
+          handlePress={submit}
+          containerStyles='mt-7'
+          isLoading={uploading}
+        />
         
       </ScrollView>
     </SafeAreaView>
